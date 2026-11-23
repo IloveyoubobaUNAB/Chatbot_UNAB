@@ -1,0 +1,144 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "¡Hola! Soy el Asistente Académico Virtual de la UNAB. Por favor indícame tu código estudiantil (ej. U00123456) para consultar tu estado académico, materias, prerrequisitos o novedades del Centro de Competencias Digitales.",
+        "options": {
+          "subtitle": "Centro de Competencias Digitales y Gestión Estudiantil",
+          "title": "Asistente Académico UNAB"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4c8e24b8-0b5b-4b76-850f-3bd9f37cd56a",
+      "name": "When chat message received",
+      "webhookId": "25d6730f-a7cf-447a-9592-c3b9e39cefe7"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Eres el Asistente Académico Oficial del programa de Ingeniería de Sistemas de la UNAB (Universidad Autónoma de Bucaramanga).\nTu función es ayudar a los estudiantes a consultar su estado académico, promedio, créditos aprobados/faltantes, historial de materias, prerrequisitos, calendario académico y cursos o noticias del Centro de Competencias Digitales (CCD).\n\nReglas estrictas:\n1. Cuando un estudiante pregunte por sus notas, materias, matrícula, promedio o cursos CCD, pídele su código estudiantil (ej. U00123456) si aún no te lo ha dado en la conversación.\n2. Usa siempre tus herramientas conectadas para consultar datos reales; nunca inventes notas, fechas ni prerrequisitos.\n3. Responde de forma clara, amable y estructurada."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "761bfacf-0d92-40bd-a412-3490fd338c26",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        288,
+        256
+      ],
+      "id": "f17cce7d-ef1f-4ac5-ac9f-4424c70bbd05",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://mcp-server:9000/mcp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.4,
+      "position": [
+        400,
+        272
+      ],
+      "id": "9edce36d-70be-4a94-8f94-ab2e0ed311af",
+      "name": "MCP Client"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-4-hydrogen",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        208
+      ],
+      "id": "ace63e74-b7bf-4ad0-a94e-8cb63d9d575b",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HwZjA1LJ7JNiiKZu",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4312c804-2947-4eb5-8a8f-2602448d6fd3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "66ba878ac10f88158dc8869ee8710faf3657d73afae8af46bf5752256de24f94"
+  },
+  "nodeGroups": [],
+  "id": "xP9wjReaFMyz2Zf2",
+  "tags": []
+}
